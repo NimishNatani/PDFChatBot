@@ -62,9 +62,9 @@ if uploaded_files:
         
 
         # Use BytesIO to create an in-memory file object
-        pdf_file = io.BytesIO(uploaded_file.getvalue())
+        # pdf_file = io.BytesIO(uploaded_file.getvalue())
 
-        loader = PyPDFLoader(pdf_file)
+        loader = PyPDFLoader(uploaded_file)
         docs = loader.load()
         documents.extend(docs)
 
