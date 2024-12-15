@@ -59,16 +59,12 @@ if uploaded_files:
     documents = []
     for uploaded_file in uploaded_files:
         
-        tempPdf = f'./{uploaded_files.name}temp.pdf'
-        if hasattr(tempPdf, 'getbuffer'):
-            with open(file_path, "wb") as file:
-                file.write(uploaded_file.getbuffer())  # For file-like objects
-        else:
-            # If it's raw bytes
-            with open(tempPdf, "wb") as file:
-                file.write(uploaded_file)
+        file_bytes = uploaded_file.read()  # Read file content into bytes
 
-        loader = PyPDFLoader(tempPdf)
+        # Use BytesIO to create an in-memory file object
+        pdf_file = io.BytesIO(file_bytes)
+
+        loader = PyPDFLoader(pdf_file)
         docs = loader.load()
         documents.extend(docs)
 
