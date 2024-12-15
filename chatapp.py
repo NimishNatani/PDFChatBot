@@ -61,7 +61,7 @@ if uploaded_files:
         
         tempPdf = f'./{uploaded_files.name}temp.pdf'
         with open(tempPdf, "wb") as file:
-            file.write(uploaded_file.getvalue())
+            file.write(uploaded_file.getbuffer())
             fileName = uploaded_file.name
 
         loader = PyPDFLoader(tempPdf)
