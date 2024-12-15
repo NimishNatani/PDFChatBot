@@ -59,10 +59,9 @@ if uploaded_files:
     documents = []
     for uploaded_file in uploaded_files:
         
-        file_bytes = uploaded_file.read()  # Read file content into bytes
 
         # Use BytesIO to create an in-memory file object
-        pdf_file = io.BytesIO(file_bytes)
+        pdf_file = io.BytesIO(uploaded_file)
 
         loader = PyPDFLoader(pdf_file)
         docs = loader.load()
