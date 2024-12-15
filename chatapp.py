@@ -61,7 +61,7 @@ if uploaded_files:
     documents = []
     for uploaded_file in uploaded_files:
 
-        tmp_location = os.path.join('/tmp', file.filename)
+        tmp_location = os.path.join('/tmp', st.session_state.uploaded_files.filename)
 
         loader = PyPDFLoader(tmp_location)
         docs = loader.load()
