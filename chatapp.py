@@ -58,7 +58,8 @@ if uploaded_files:
     st.session_state.uploaded_files = uploaded_files  # Save uploaded files in session
     documents = []
     for uploaded_file in uploaded_files:
-        tempPdf = f'./temp.pdf'
+        
+        tempPdf = f'./{uploaded_files.name}temp.pdf'
         with open(tempPdf, "wb") as file:
             file.write(uploaded_file.getvalue())
             fileName = uploaded_file.name
