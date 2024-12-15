@@ -60,9 +60,13 @@ if uploaded_files:
     for uploaded_file in uploaded_files:
         
         tempPdf = f'./{uploaded_files.name}temp.pdf'
-        with open(tempPdf, "wb") as file:
-            file.write(uploaded_file.getbuffer())
-            fileName = uploaded_file.name
+        if hasattr(tempPdf, 'getbuffer'):
+            with open(file_path, "wb") as file:
+                file.write(uploaded_file.getbuffer())  # For file-like objects
+        else:
+            # If it's raw bytes
+            with open(tempPdf, "wb") as file:
+                file.write(uploaded_file)
 
         loader = PyPDFLoader(tempPdf)
         docs = loader.load()
