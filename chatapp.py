@@ -1,4 +1,5 @@
 import io
+import tempfile
 import streamlit as st
 from langchain.chains import create_retrieval_chain, create_history_aware_retriever
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -59,12 +60,11 @@ if uploaded_files:
     st.session_state.uploaded_files = uploaded_files  # Save uploaded files in session
     documents = []
     for uploaded_file in uploaded_files:
-        
 
-        # Use BytesIO to create an in-memory file object
-        # pdf_file = io.BytesIO(uploaded_file.getvalue())
-
-        loader = PyPDFLoader(uploaded_file)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+            tmp_file.write(uploaded_file.getvalue())
+            temp_file_path = tmp_file.name
+        loader = PyPDFLoader(temp_file_path)
         docs = loader.load()
         documents.extend(docs)
 
