@@ -1,4 +1,5 @@
 import io
+import shutil
 import tempfile
 import streamlit as st
 from langchain.chains import create_retrieval_chain, create_history_aware_retriever
@@ -61,9 +62,11 @@ if uploaded_files:
     documents = []
     for uploaded_file in uploaded_files:
 
-        tmp_location = os.path.join('/tmp', st.session_state.uploaded_files.filename)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
+            shutil.copyfileobj(uploaded_file, tmpfile)
+            file_path = tmpfile.name
 
-        loader = PyPDFLoader(tmp_location)
+        loader = PyPDFLoader(file_path)
         docs = loader.load()
         documents.extend(docs)
 
