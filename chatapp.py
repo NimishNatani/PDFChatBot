@@ -61,10 +61,9 @@ if uploaded_files:
     documents = []
     for uploaded_file in uploaded_files:
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
-            tmp_file.write(uploaded_file.getvalue())
-            temp_file_path = tmp_file.name
-        loader = PyPDFLoader(temp_file_path)
+        tmp_location = os.path.join('/tmp', file.filename)
+
+        loader = PyPDFLoader(tmp_location)
         docs = loader.load()
         documents.extend(docs)
 
