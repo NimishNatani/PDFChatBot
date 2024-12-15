@@ -22,6 +22,17 @@ groq_api_key = os.getenv("Groq_Api_Key")
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
+@st.cache(allow_output_mutation=True)
+def process_uploaded_pdf(uploaded_file):
+    temp_dir = tempfile.mkdtemp()
+    temp_path = os.path.join(temp_dir, uploaded_file.name)
+    with open(temp_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    loader = PyPDFLoader(temp_path)
+    documents = loader.load()
+    shutil.rmtree(temp_dir)  # Clean up the temporary directory
+    return documents
+
 st.title("PDF Conversational Chatbot")
 st.write("Upload PDF and chat with their content")
 
@@ -58,22 +69,10 @@ uploaded_files = st.file_uploader("Choose a PDF to upload", type="pdf", accept_m
 
 # If files are uploaded, process them
 if uploaded_files:
-    st.session_state.uploaded_files = uploaded_files  # Save uploaded files in session
-    documents = []
-    for uploaded_file in uploaded_files:
-
-        file_like = io.BytesIO(uploaded_file)
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
-            shutil.copyfileobj(file_like, tmpfile)
-            file_path = tmpfile.name
-
-        loader = PyPDFLoader(file_path)
-        docs = loader.load()
-        documents.extend(docs)
-
+    st.session_state.uploaded_files = uploaded_files  # Save uploaded file
+    documents = process_uploaded_pdf(uploaded_files) 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
-    splits = text_splitter.split_documents(docs)
+    splits = text_splitter.split_documents(documents)
     vector_store = FAISS.from_documents(splits, embedding=embeddings)
     retriever = vector_store.as_retriever()
 
