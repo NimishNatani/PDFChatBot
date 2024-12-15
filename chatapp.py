@@ -62,8 +62,10 @@ if uploaded_files:
     documents = []
     for uploaded_file in uploaded_files:
 
+        file_like = io.BytesIO(uploaded_file)
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
-            shutil.copyfileobj(uploaded_file, tmpfile)
+            shutil.copyfileobj(file_like, tmpfile)
             file_path = tmpfile.name
 
         loader = PyPDFLoader(file_path)
