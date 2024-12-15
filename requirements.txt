@@ -1,0 +1,11 @@
+streamlit
+langchain
+python-dotenv
+langchain-community
+langchain-text-splitters
+sentence_transformers
+langchain_huggingface
+faiss-cpu
+langchain_groq
+langchain_core
+os
