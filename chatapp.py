@@ -22,7 +22,8 @@ groq_api_key = os.getenv("Groq_Api_Key")
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-@st.cache(allow_output_mutation=True)
+# @st.cache(allow_output_mutation=True)
+@st.cache_data
 def process_uploaded_pdf(uploaded_file):
     temp_dir = tempfile.mkdtemp()
     temp_path = os.path.join(temp_dir, uploaded_file.name)
