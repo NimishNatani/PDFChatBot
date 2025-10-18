@@ -1,6 +1,7 @@
 streamlit
 langchain
 python-dotenv
+langchain>=0.2.10
 langchain-community
 langchain-text-splitters
 sentence_transformers
