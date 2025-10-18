@@ -17,10 +17,11 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 import os
 from dotenv import load_dotenv
 load_dotenv()
-os.environ["HF_TOKEN"] = os.getenv("Hug_Face_API_Key")
+hf_Token = os.getenv("Hug_Face_API_Key")
 groq_api_key = os.getenv("Groq_Api_Key")
 
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2",    huggingfacehub_api_token=hf_Token
+)
 
 # @st.cache(allow_output_mutation=True)
 @st.cache_data
