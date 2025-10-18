@@ -1,3 +1,6 @@
+import io
+import shutil
+import tempfile
 import streamlit as st
 from langchain.chains import create_retrieval_chain, create_history_aware_retriever
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -17,7 +20,19 @@ load_dotenv()
 os.environ["HF_TOKEN"] = os.getenv("Hug_Face_API_Key")
 groq_api_key = os.getenv("Groq_Api_Key")
 
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
+# @st.cache(allow_output_mutation=True)
+@st.cache_data
+def process_uploaded_pdf(uploaded_file):
+    temp_dir = tempfile.mkdtemp()
+    temp_path = os.path.join(temp_dir, uploaded_file.name)
+    with open(temp_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    loader = PyPDFLoader(temp_path)
+    documents = loader.load()
+    shutil.rmtree(temp_dir)  # Clean up the temporary directory
+    return documents
 
 st.title("PDF Conversational Chatbot")
 st.write("Upload PDF and chat with their content")
@@ -57,24 +72,12 @@ uploaded_files = st.file_uploader("Choose a PDF to upload", type="pdf", accept_m
 
 # If files are uploaded, process them
 if uploaded_files:
-    if "vector_store" not in st.session_state or st.session_state.get("processed_file") != uploaded_files.name:
-        with st.spinner("Processing PDF... Please wait."):
-            tempPdf = f'./{uploaded_files.name}_temp.pdf'
-            with open(tempPdf, "wb") as file:
-                file.write(uploaded_files.getvalue())
-
-            loader = PyPDFLoader(tempPdf)
-            docs = loader.load()
-
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
-            splits = text_splitter.split_documents(docs)
-
-            st.session_state.vector_store = FAISS.from_documents(splits, embedding=embeddings)
-            st.session_state.processed_file = uploaded_files.name
-            st.success(f"✅ Processed {uploaded_files.name} successfully!")
-
-    retriever = st.session_state.vector_store.as_retriever()
-
+    st.session_state.uploaded_files = uploaded_files  # Save uploaded file
+    documents = process_uploaded_pdf(uploaded_files) 
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
+    splits = text_splitter.split_documents(documents)
+    vector_store = FAISS.from_documents(splits, embedding=embeddings)
+    retriever = vector_store.as_retriever()
 
     contextualize_q_system_prompt = (
         "Given a chat history and the latest user question"
