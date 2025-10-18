@@ -1,4 +1,5 @@
 import io
+import os
 import shutil
 import tempfile
 import streamlit as st
@@ -17,11 +18,10 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 import os
 from dotenv import load_dotenv
 load_dotenv()
-hf_Token = os.getenv("Hug_Face_API_Key")
-groq_api_key = os.getenv("Groq_Api_Key")
+os.environ["HF_TOKEN"] = st.secrets("Hug_Face_API_Key")
+groq_api_key = st.secrets("Groq_Api_Key")
 
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2",    huggingfacehub_api_token=hf_Token
-)
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # @st.cache(allow_output_mutation=True)
 @st.cache_data
