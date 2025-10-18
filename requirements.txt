@@ -1,12 +1,12 @@
-streamlit
-python-dotenv
-langchain>= 0.3.11
-langchain-community
 langchain-text-splitters
-sentence_transformers
-langchain_huggingface
+streamlit
+langchain>=0.2.10
+langchain-community>=0.2.10
+langchain-core>=0.2.10
+langchain-huggingface
+langchain-groq
 faiss-cpu
-langchain_groq
-langchain_core
+python-dotenv
 pypdf
+sentence-transformers
 
